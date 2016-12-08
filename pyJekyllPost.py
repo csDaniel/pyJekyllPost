@@ -42,7 +42,51 @@ def addFrontMatter(contents):
 	frontMatter = ""
 	
 
+def configOpen(configFile):
+	try:
+		# NAME IS 'config'
+		filedesc = open(configFile, 'r')
+	except IOError:
+		errorMessage("Cannot Open Config", "Config File cannot be Located")
+		noConfigAnswer = input("Would you like to make a new Config File? y/n \n")
+		noConfigAnswer.lower()
+		if noConfigAnswer[0] is "y":
+			makeNewConfig()
+		else:
+			errorMessage("Goodbye","pyJekyll cannot operate without a config file.")
+	else:
+		# config file is located
+		configRaw = filedesc.read()
+		configRaw = configRaw.split("$#")
+		config = formatConfigDataFromFile(configRaw)
+		return config
+
+def formatConfigDataFromFile(fileContents):
+	configDict = {}
+	configDict['layouts'] = {}
+	configDict['categories'] = {}
+
+	for eachLine in fileContents:
+		chunks = eachLine.split("=")
+		if chunks[0] == 'loc':
+			configDict['location'] = chunks[1]
+		if chunks[0] == "layouts":
+			configDict['layouts'] = chunks[1].split(",")
+		if chunks[0] == "categories":
+			configDict['categories'] = chunks[1].split(",")
 	
+	class Config(object):
+		def __init__(self):
+			self.outputLocation = configDict['location']
+			self.layouts = configDict['layouts']
+			self.categories = configDict['categories']
+	
+	config = Config()
+	return config
+
+	
+def makeNewConfig():
+	print("WE DID IT")
 # discover layout desired
 
 # get date
@@ -72,10 +116,8 @@ def getDate():
 def setCategory(filename):
 	categories = returnCurrentCategories(filename)
 
-def returnCurrentCategories(filename)
-
+def returnCurrentCategories(filename):
 	categories = filename 
-
 	return categories
 	
 	
