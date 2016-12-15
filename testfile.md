@@ -1,1 +1,1 @@
-This is a simple test file. Nothing more
+This is a simple test post. I need it to test posting content to a file.
