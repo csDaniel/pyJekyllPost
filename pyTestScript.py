@@ -2,7 +2,7 @@
 
 from pyJekyllPost import *
 import sys
-
+from pyJPconfig import *
 
 def status(count, filename):
 	print("Beginning test {}: \t {}".format(count, filename))
@@ -137,34 +137,104 @@ def writeFileTest(content, config, title):
 	else:
 		f.write(rawContent)
 		f.close()
+
+def configOpen(location):
+	lines()
+	print("Testing of Config Location Reading...")
+	config = Config()
+	oldCategories = list(config.categories)
+	oldLayouts = list(config.layouts)
+	
+	config.getLoc(location)	
+	
+	n = False
+	if len(config.categories) > 0: 
+		if set(config.categories) == set(oldCategories):
+			print("Error: \n\t Categories unchanged:\n{}\n{}".format(oldCategories, config.categories))
+			n = True
+	else:
+		n = True
+	if len(config.layouts) > 0:
+		if set(config.layouts) == set(oldLayouts):
+			print("Error: \n\t Layouts unchanged:\n{}\n{}".format(oldLayouts, config.layouts))
+			n = True
+	else:
+		n = True
+	
+	if n is True:
+		print("Results...\t FAIL")
+	else:
+		print("Results...\t PASS")	
 		
+def configAddLayoutCategory(location, newOption):
+	lines()
+	print("Testing adding layout and category to config")
+	config = Config()
+	config.getLoc(location)	
+	
+	oldCategories = list(config.categories)
+	oldCategories.append(newOption)
+	
+	oldLayouts = list(config.layouts)
+	oldLayouts.append(newOption)
+	
+	config.addLayout(newOption)
+	config.addCategory(newOption)
+	
+	n = False
+	if not set(oldLayouts) & set(config.layouts):
+		print("Error: \n\t Content does not match:\n{}\n{}".format(oldLayouts, config.layouts))
+		n = True
+	
+	if not set(oldCategories) & set(config.categories):
+		print("Error: \n\t Content does not match:\n{}\n{}".format(oldCategories, config.categories))
+		n = True
+		
+	if n is True:
+		print("Results...\t FAIL")
+	else:
+		print("Results...\t PASS")	
+	
+def configBuildTest(location):
+	lines()
+	print("Testing building a new config file")
+	
 def testSuite():
+	mode = 2
 
-	#config Testing
-	configFile = "config"
-	configTestOpen(configFile)
+	if mode is 1:
+		#config Testing
+		configFile = "config"
+		configTestOpen(configFile)
+		
+		# story Testing
+		test1 = "testfile.md"
+		storyTestContent(test1)
+		
+		titleTest = "default title for a test"
+		storyTestTitle(titleTest)
+		# date Testing
+		storyTestDate()
+		# simple write test in same folder
+		writeFileTest(test1, configFile, titleTest)
+		# test with a non .md file
+		test2 = r'C:\CODEZ\projects\pyJekyllPost\New folder\introPost.txt'
+		writeFileTest(test2, configFile, titleTest)
+
+		test3 = r'C:\CODEZ\projects\pyJekyllPost\New folder\msDocTest.docx'
+		testTitle3 = "This is the third test"
+		#writeFileTest(test3, configFile, testTitle3)
+		
+	elif mode is 2:	
+		test1 = r'C:\CODEZ\projects\pyJekyllPost\New folder'
+		configOpen(test1)
+		
+		test2 = r'C:\CODEZ\projects\pyJekyllPost\New fol'
+		configOpen(test2)
 	
-	# story Testing
-	test1 = "testfile.md"
-	storyTestContent(test1)
-	
-	titleTest = "default title for a test"
-	storyTestTitle(titleTest)
-	
-	# date Testing
-	storyTestDate()
-
-	# simple write test in same folder
-	writeFileTest(test1, configFile, titleTest)
-	
-
-	# test with a non .md file
-	test2 = r'C:\CODEZ\projects\pyJekyllPost\New folder\introPost.txt'
-	writeFileTest(test2, configFile, titleTest)
-
-	test3 = r'C:\CODEZ\projects\pyJekyllPost\New folder\msDocTest.docx'
-	testTitle3 = "This is the third test"
-	#writeFileTest(test3, configFile, testTitle3)
-
+		newOption = "bananas"
+		configAddLayoutCategory(test1, newOption)
+		
+		configBuildTest(test1)
 	
 testSuite()

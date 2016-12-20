@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-import sys
-import os
-import datetime
-import time
+
 
 def lines():
   print("-------")
@@ -12,7 +9,12 @@ def errorMessage(msg, details):
 	print("Error: {}.".format(msg))
 	print("{}".format(details))
 	
-	
+import sys
+import os
+import datetime
+import time	
+import pyJPconfig
+
 	
 	
 class Story(object):	
@@ -111,7 +113,7 @@ class Story(object):
 		
 	def saveStory(self, filename):
 		filename = self.title.replace(" ", "-")
-		filename = self.location +"/" + filename
+		filename = self.location +"/" + filename + ".md"
 		try:
 			fileDesc = open(filename, 'w')
 		except IOError:
